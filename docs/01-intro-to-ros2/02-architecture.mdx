@@ -1,0 +1,72 @@
+---
+title: "Lesson 1.2: ROS 2 Architecture & Communication Graph"
+description: "Understanding the ROS 2 graph and how nodes communicate."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 1.2: ROS 2 Architecture & Communication Graph
+
+## Learning Goals
+
+- Understand the concept of the ROS 2 communication graph.
+- Learn how to visualize the ROS 2 graph using `rqt_graph`.
+- Understand how nodes, topics, and services form the graph.
+
+## The ROS 2 Graph
+
+The **ROS 2 graph** is a network of ROS 2 nodes and the connections between them. It is a visual representation of how your robotic system is structured and how data flows between its different parts. The graph consists of:
+
+-   **Nodes**: The processes that perform computation.
+-   **Topics**: The buses that carry messages between nodes.
+-   **Services**: The request/response connections between nodes.
+-   **Actions**: For long-running tasks (we will cover this later).
+
+By visualizing the graph, you can quickly understand the architecture of a ROS 2 system, debug communication issues, and see how different parts of the system are related.
+
+## Visualizing the Graph with `rqt_graph`
+
+ROS 2 provides a powerful tool called `rqt_graph` to visualize the communication graph. It shows the running nodes and the topics that connect them.
+
+To use `rqt_graph`, you first need to install it. If you have a desktop installation of ROS 2, it should already be included. If not, you can install it with:
+
+```bash
+sudo apt-get update
+sudo apt-get install ros-humble-rqt-graph
+```
+
+<Admonition type="note" title="ROS 2 Distributions">
+  The command above assumes you are using the ROS 2 Humble distribution. If you are using a different distribution, replace `humble` with the name of your distribution (e.g., `iron`, `jazzy`).
+</Admonition>
+
+Once installed, you can run `rqt_graph` from your terminal:
+
+```bash
+rqt_graph
+```
+
+This will open a window that displays the graph of your running ROS 2 system.
+
+## Hands-on Lab: Visualizing the TurtleSim Graph
+
+Let's visualize the graph of the `turtlesim` system we used in the previous lesson.
+
+1.  **Start the turtlesim simulator**: If it's not already running, open a terminal and run:
+    ```bash
+    ros2 run turtlesim turtlesim_node
+    ```
+2.  **Start the teleoperation node**: In a new terminal, run:
+    ```bash
+    ros2 run turtlesim turtle_teleop_key
+    ```
+3.  **Start `rqt_graph`**: In another new terminal, run:
+    ```bash
+    rqt_graph
+    ```
+4.  **Analyze the graph**: The `rqt_graph` window will show you the two running nodes: `/turtlesim` and `/teleop_turtle`. You will see an arrow connecting `/teleop_turtle` to `/turtlesim`, with the topic `/turtle1/cmd_vel` in between.
+
+    This shows that the `/teleop_turtle` node is publishing messages to the `/turtle1/cmd_vel` topic, and the `/turtlesim` node is subscribing to that topic to receive the velocity commands and move the turtle.
+
+    You can change the view to show more details, like services and actions, using the options in the `rqt_graph` window.
+
+By exploring the ROS 2 graph, you can gain a deeper understanding of how your robot's software components are interconnected and how they communicate.

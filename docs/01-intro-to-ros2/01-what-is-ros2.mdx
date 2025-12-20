@@ -1,0 +1,78 @@
+---
+title: "Lesson 1.1: What is ROS 2?"
+description: "An introduction to the fundamental concepts of ROS 2."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 1.1: What is ROS 2?
+
+## Learning Goals
+
+- Understand what ROS 2 is and its purpose.
+- Learn about the core concepts of ROS 2: nodes, topics, and services.
+- Be able to run a simple ROS 2 command.
+
+## What is ROS 2?
+
+ROS 2 (Robot Operating System 2) is an open-source set of software libraries and tools for building robot applications. It is the next generation of the Robot Operating System (ROS), redesigned from the ground up to be more robust, secure, and scalable. ROS 2 provides a standard way for different parts of a robotic system to communicate with each other, making it easier to build complex robot behaviors.
+
+<Admonition type="info" title="From the official documentation">
+  ROS 2 is an open-source set of software libraries and tools for building robot applications, offering drivers, algorithms, and developer tools.
+</Admonition>
+
+## Core Concepts
+
+At the heart of ROS 2 are three fundamental concepts: **nodes**, **topics**, and **services**.
+
+### Nodes
+
+A **node** is a process that performs some computation. Think of it as a small, independent program that does one thing. For example, you might have a node for controlling a motor, a node for reading a sensor, and a node for planning a path. Each node can be run, stopped, and restarted independently.
+
+You can see the list of all running nodes in a ROS 2 system using the following command:
+
+```bash
+ros2 node list
+```
+
+### Topics
+
+**Topics** are named buses for messages. Nodes use topics to send and receive data without knowing about each other. A node can **publish** messages to a topic, and any number of nodes can **subscribe** to that topic to receive the messages. This decouples the nodes from each other, allowing for a flexible and modular system.
+
+For example, a camera node might publish images to an `/image_raw` topic, and a separate image processing node can subscribe to that topic to receive the images.
+
+You can see a list of all active topics with the following command:
+
+```bash
+ros2 topic list
+```
+
+### Services
+
+**Services** are another way for nodes to communicate, but they are used for request/response interactions. One node acts as a **service server**, offering a service, and another node acts as a **service client**, calling the service and waiting for a response. This is similar to a remote procedure call (RPC).
+
+For example, you might have a service that calculates the distance between two points. A client node can send a request with the coordinates of the two points, and the server node will respond with the calculated distance.
+
+## Code Example: Running a ROS 2 Node
+
+Let's run a simple ROS 2 node. The `turtlesim` package provides a simple simulator of a turtle that you can control. To start the simulator, open a terminal and run the following command:
+
+```bash
+ros2 run turtlesim turtlesim_node
+```
+
+This command runs the `turtlesim_node` from the `turtlesim` package. You should see a new window with a turtle in it.
+
+## Hands-on Lab: Exploring Your First ROS 2 System
+
+1.  **Start the turtlesim simulator**: Open a terminal and run the command from the code example above.
+2.  **List the running nodes**: Open a **new** terminal and run `ros2 node list`. You should see `/turtlesim` in the list.
+3.  **List the active topics**: In the same terminal, run `ros2 topic list -t`. You will see a list of topics and their types. Notice topics like `/turtle1/cmd_vel` and `/turtle1/pose`.
+4.  **Control the turtle**: Let's make the turtle move. Open another **new** terminal and run the following command to start a teleoperation node:
+    ```bash
+    ros2 run turtlesim turtle_teleop_key
+    ```
+5.  **Drive the turtle**: With the teleoperation terminal active, use the arrow keys on your keyboard to drive the turtle around in the simulator window.
+6.  **Observe the nodes**: Go back to the terminal where you listed the nodes and run `ros2 node list` again. You should now see `/teleop_turtle` as well.
+
+Congratulations! You have just run and interacted with your first ROS 2 system.

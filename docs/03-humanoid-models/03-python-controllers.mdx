@@ -1,0 +1,165 @@
+---
+title: "Lesson 3.3: Integrating Python Controllers"
+description: "Learn how to control your robot model by publishing joint states from a Python node."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 3.3: Integrating Python Controllers
+
+## Learning Goals
+
+-   Understand the role of the `/joint_states` topic.
+-   Write a Python node that publishes `sensor_msgs/msg/JointState` messages.
+-   Create a launch file to use your Python node as the joint state publisher.
+-   Animate your robot model programmatically.
+
+## Controlling the Robot's State
+
+In the previous lesson, we used the `joint_state_publisher_gui` to manually control the robot's joints. This is great for testing and debugging, but for a real robot, the joint states are usually published by a controller node that reads the robot's sensor data (e.g., from motor encoders).
+
+The `robot_state_publisher` listens to the `/joint_states` topic to get the current angles of all the joints. The messages on this topic are of type `sensor_msgs/msg/JointState`.
+
+A `JointState` message contains three main fields:
+-   `name`: A list of the names of the joints.
+-   `position`: A list of the current positions (angles) of the joints.
+-   `velocity`: A list of the current velocities of the joints (optional).
+
+Our goal is to write a Python node that publishes `JointState` messages to control our robot model programmatically.
+
+## Python Joint State Publisher
+
+Let's create a node that publishes a continuously changing angle for our two-link arm's joints, making it wave.
+
+```python
+# joint_state_publisher.py
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from math import sin, cos, pi
+import time
+
+class JointStatePublisher(Node):
+    def __init__(self):
+        super().__init__('my_joint_state_publisher')
+        self.publisher_ = self.create_publisher(JointState, 'joint_states', 10)
+        timer_period = 0.1  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.start_time = time.time()
+
+    def timer_callback(self):
+        joint_state = JointState()
+        
+        now = self.get_clock().now()
+        joint_state.header.stamp = now.to_msg()
+        
+        joint_state.name = ['shoulder_joint', 'elbow_joint']
+        
+        elapsed_time = time.time() - self.start_time
+        angle = sin(elapsed_time) * (pi / 4) # Swing between -45 and +45 degrees
+        
+        joint_state.position = [angle, angle]
+        
+        self.publisher_.publish(joint_state)
+        self.get_logger().info(f'Publishing joint states: {joint_state.position}')
+
+def main(args=None):
+    rclpy.init(args=args)
+    joint_state_publisher = JointStatePublisher()
+    rclpy.spin(joint_state_publisher)
+    joint_state_publisher.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Hands-on Lab: Animate Your Robot
+
+### 1. Create the Node File
+
+In your `my_robot_description` package, create a new file called `joint_state_publisher.py` and paste the code from the example above.
+
+### 2. Update `setup.py`
+
+Add an entry point for your new node.
+
+```python
+# Inside setup.py
+entry_points={
+    'console_scripts': [
+        # ... other entry points
+        'my_joint_publisher = my_robot_description.joint_state_publisher:main',
+    ],
+},
+```
+
+### 3. Create a New Launch File
+
+We'll create a new launch file that uses our Python node instead of the GUI. Create `display_animated.launch.py` in your `launch` directory.
+
+```python
+# display_animated.launch.py
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
+
+def generate_launch_description():
+    urdf_file_name = 'two_link_arm.urdf'
+    urdf = os.path.join(
+        get_package_share_directory('my_robot_description'),
+        'urdf',
+        urdf_file_name)
+    with open(urdf, 'r') as infp:
+        robot_desc = infp.read()
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'),
+
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{'robot_description': robot_desc}]),
+
+        # This is our new node
+        Node(
+            package='my_robot_description',
+            executable='my_joint_publisher',
+            name='my_joint_publisher',
+            output='screen'),
+
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            arguments=['-d', os.path.join(get_package_share_directory('my_robot_description'), 'rviz', 'display.rviz')])
+    ])
+```
+
+<Admonition type="tip" title="Reusability">
+  Notice how similar this launch file is to the previous one. We just swapped out the `joint_state_publisher_gui` node for our own `my_joint_publisher` node. This is the power of the ROS 2 decoupled architecture!
+</Admonition>
+
+### 4. Build and Launch
+
+Build your package and launch the new file.
+
+```bash
+# In your workspace root
+colcon build --packages-select my_robot_description
+source install/setup.bash
+
+# Launch the animated display
+ros2 launch my_robot_description display_animated.launch.py
+```
+
+Now, when RViz opens, you should see your robot arm waving back and forth on its own! You have successfully created a Python controller for your robot model.

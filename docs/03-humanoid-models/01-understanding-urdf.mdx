@@ -1,0 +1,149 @@
+---
+title: "Lesson 3.1: Understanding URDF"
+description: "Learn the basics of the Unified Robot Description Format (URDF)."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 3.1: Understanding URDF
+
+## Learning Goals
+
+-   Understand the purpose of URDF in robotics.
+-   Learn the basic syntax of URDF, including the `<robot>`, `<link>`, and `<joint>` tags.
+-   Understand the difference between the `<visual>` and `<collision>` tags.
+-   Create a simple URDF file for a single robot link.
+
+## What is URDF?
+
+**URDF** stands for **Unified Robot Description Format**. It is an XML-based file format used in ROS to describe all the physical properties of a robot. This includes:
+
+-   **Kinematics**: The structure of the robot, including its links (the rigid parts) and joints (the moving parts that connect the links).
+-   **Visuals**: How the robot should look in simulations and visualizations like RViz.
+-   **Collision Models**: The geometry of the robot used for collision detection in physics simulations.
+-   **Dynamics**: Physical properties like mass and inertia, which are important for realistic simulation.
+
+By having a standardized format for describing a robot, ROS provides a wide range of tools that can automatically parse your URDF file and use it for simulation, visualization, and planning.
+
+## Basic URDF Syntax
+
+A URDF file is an XML file with a root element called `<robot>`. Inside the `<robot>` tag, you define the robot's structure using `<link>` and `<joint>` tags.
+
+### The `<link>` Tag
+
+A **link** represents a rigid part of the robot. It has a name and can contain three main sub-tags: `<visual>`, `<collision>`, and `<inertial>`.
+
+```xml
+<link name="my_link">
+  <visual>
+    <geometry>
+      <box size="0.1 0.1 0.5" />
+    </geometry>
+    <material name="blue">
+      <color rgba="0 0 0.8 1"/>
+    </material>
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.1 0.1 0.5" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="1" />
+    <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+  </inertial>
+</link>
+```
+
+-   `<visual>`: Describes how the link looks. You define its shape (`<geometry>`) and color (`<material>`). The geometry can be a `<box>`, `<cylinder>`, `<sphere>`, or a 3D mesh file (`<mesh>`).
+-   `<collision>`: Describes the physical shape of the link for collision detection. It's often simpler than the visual geometry to speed up physics calculations.
+-   `<inertial>`: Describes the dynamic properties of the link, including its `<mass>` and `<inertia>` tensor. This is crucial for realistic simulation.
+
+### The `<joint>` Tag
+
+A **joint** connects two links and defines how they can move relative to each other.
+
+```xml
+<joint name="my_joint" type="revolute">
+  <parent link="parent_link"/>
+  <child link="child_link"/>
+  <origin xyz="0 0 0.5" rpy="0 0 0" />
+  <axis xyz="0 0 1" />
+  <limit lower="-1.57" upper="1.57" effort="100" velocity="10" />
+</joint>
+```
+
+-   `type`: The most common types are:
+    -   `revolute`: A hinge joint that rotates around an axis.
+    -   `continuous`: A revolute joint with no limits.
+    -   `prismatic`: A sliding joint that moves along an axis.
+    -   `fixed`: A joint that doesn't allow any motion. This is useful for rigidly connecting two links.
+-   `<parent>` and `<child>`: Defines the two links that the joint connects.
+-   `<origin>`: Specifies the pose (position and orientation) of the child link relative to the parent link.
+-   `<axis>`: The axis of rotation (for revolute joints) or translation (for prismatic joints).
+-   `<limit>`: (For revolute and prismatic joints) Defines the joint's limits of motion, as well as its maximum velocity and effort.
+
+## Hands-on Lab: Create a Simple URDF
+
+Let's create a URDF file for a single, simple link.
+
+### 1. Create a Package
+
+If you haven't already, create a package for your robot description files.
+
+```bash
+# In your workspace's src directory
+ros2 pkg create --build-type ament_python my_robot_description --dependencies rclpy
+```
+
+### 2. Create a URDF Directory
+
+Inside your new package, create a directory to hold your URDF files.
+
+```bash
+cd my_robot_description
+mkdir urdf
+```
+
+### 3. Create the URDF File
+
+Create a new file called `single_link.urdf` inside the `urdf` directory and add the following content:
+
+```xml
+<?xml version="1.0"?>
+<robot name="single_link_robot">
+
+  <!-- A "world" link is often used as a fixed base -->
+  <link name="world" />
+
+  <joint name="fixed_joint_to_world" type="fixed">
+    <parent link="world" />
+    <child link="my_base_link" />
+  </joint>
+
+  <link name="my_base_link">
+    <visual>
+      <geometry>
+        <box size="0.5 0.5 0.2" />
+      </geometry>
+      <origin xyz="0 0 0.1" rpy="0 0 0" />
+      <material name="light_gray">
+        <color rgba="0.8 0.8 0.8 1.0" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.5 0.5 0.2" />
+      </geometry>
+      <origin xyz="0 0 0.1" rpy="0 0 0" />
+    </collision>
+    <inertial>
+      <mass value="5" />
+      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1" />
+    </inertial>
+  </link>
+
+</robot>
+```
+
+In the next lesson, we will learn how to visualize this URDF file in RViz2, the ROS 2 3D visualizer.

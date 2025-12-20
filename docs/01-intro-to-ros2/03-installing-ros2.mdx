@@ -1,0 +1,98 @@
+---
+title: "Lesson 1.3: Installing the ROS 2 Environment"
+description: "A step-by-step guide to installing ROS 2 Humble on Ubuntu."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 1.3: Installing the ROS 2 Environment
+
+## Learning Goals
+
+-   Set up the required sources for installing ROS 2.
+-   Install ROS 2 Humble Desktop on an Ubuntu system.
+-   Source the ROS 2 environment to enable its commands.
+-   Validate the installation by running a simple example.
+
+## Prerequisites
+
+-   An Ubuntu 22.04 (Jammy Jellyfish) system.
+-   A user with `sudo` privileges.
+
+<Admonition type="info" title="Why Humble?">
+  ROS 2 Humble Hawksbill is a Long-Term Support (LTS) release, which means it will be supported with security updates and bug fixes for a longer period (until May 2027). This makes it a stable and reliable choice for learning and development.
+</Admonition>
+
+## Installation Steps
+
+These instructions are based on the official ROS 2 documentation.
+
+### 1. Set Locale
+
+Make sure your system supports UTF-8.
+
+```bash
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+```
+
+### 2. Add the ROS 2 APT Repository
+
+First, install the necessary dependencies for adding the ROS 2 repository.
+
+```bash
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+```
+
+Now, add the ROS 2 GPG key and the repository itself.
+
+```bash
+sudo apt update && sudo apt install curl -y
+sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+### 3. Install ROS 2
+
+Update your package lists and then install the full desktop version of ROS 2 Humble.
+
+```bash
+sudo apt update
+sudo apt install ros-humble-desktop
+```
+
+This will install the core ROS 2 libraries, developer tools like RViz, and tutorials.
+
+### 4. Source the Environment
+
+To use the ROS 2 commands, you need to source the setup script in your terminal.
+
+```bash
+source /opt/ros/humble/setup.bash
+```
+
+It's convenient to add this command to your `.bashrc` file so it runs automatically every time you open a new terminal.
+
+```bash
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+```
+
+## Validation Lab
+
+Let's validate that the installation was successful and the environment is set up correctly.
+
+1.  **Source your environment**: If you haven't already, open a new terminal or run `source /opt/ros/humble/setup.bash`.
+2.  **Run a talker node**: In one terminal, run the following command. It will start publishing "Hello World" messages.
+    ```bash
+    ros2 run demo_nodes_cpp talker
+    ```
+3.  **Run a listener node**: Open a **new** terminal (and source the environment again if you didn't add it to your `.bashrc`). Run the following command:
+    ```bash
+    ros2 run demo_nodes_cpp listener
+    ```
+4.  **Verify communication**: You should see the `talker` terminal publishing messages and the `listener` terminal receiving and printing them. This confirms that your ROS 2 installation is working correctly.
+
+Congratulations! You now have a working ROS 2 Humble environment ready for development.

@@ -1,0 +1,126 @@
+---
+title: "Lesson 2.1: Writing ROS 2 Nodes with rclpy"
+description: "Learn how to write a basic ROS 2 node in Python using rclpy."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 2.1: Writing ROS 2 Nodes with rclpy
+
+## Learning Goals
+
+-   Understand the role of `rclpy`, the ROS 2 Python client library.
+-   Write a simple "Hello World" ROS 2 node in Python.
+-   Create a ROS 2 package to organize your code.
+-   Build and run your own Python node.
+
+## What is `rclpy`?
+
+`rclpy` is the official **ROS Client Library for Python**. It provides the necessary tools and interfaces to write ROS 2 nodes in Python. With `rclpy`, you can create nodes, publish and subscribe to topics, create services and clients, and interact with all the core features of ROS 2.
+
+To use `rclpy`, you simply import it into your Python script:
+
+```python
+import rclpy
+from rclpy.node import Node
+```
+
+The `rclpy.node.Node` class is the foundation for creating your own nodes.
+
+## "Hello World" Node Example
+
+Let's create a simple node that just prints a "Hello, ROS 2!" message to the console.
+
+```python
+import rclpy
+from rclpy.node import Node
+
+class MyNode(Node):
+    def __init__(self):
+        super().__init__('hello_ros2_node')
+        self.get_logger().info('Hello, ROS 2!')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MyNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Code Breakdown
+
+1.  **`import rclpy` and `from rclpy.node import Node`**: We import the necessary libraries.
+2.  **`class MyNode(Node):`**: We define our own node class, inheriting from the base `Node` class.
+3.  **`super().__init__('hello_ros2_node')`**: We call the parent class constructor and give our node a unique name, `hello_ros2_node`.
+4.  **`self.get_logger().info(...)`**: We use the node's built-in logger to print a message. This is the standard way to print information in ROS 2.
+5.  **`def main(args=None):`**: The main function where the program execution starts.
+6.  **`rclpy.init(args=args)`**: Initializes the `rclpy` library. This must be the first line in your ROS 2 Python program.
+7.  **`node = MyNode()`**: We create an instance of our node.
+8.  **`rclpy.spin(node)`**: This is the main event loop for the node. It keeps the node running and responsive to events like incoming messages. The program will stay in this loop until the node is shut down.
+9.  **`node.destroy_node()` and `rclpy.shutdown()`**: Cleans up the node and shuts down `rclpy`.
+
+## Hands-on Lab: Create and Run Your First Node
+
+### 1. Create a ROS 2 Package
+
+First, we need a package to hold our code. A package is just a directory with a specific structure and a `package.xml` file.
+
+```bash
+# Navigate to the src directory of your workspace
+cd ~/ros2_ws/src
+
+# Create a new package
+ros2 pkg create --build-type ament_python my_python_pkg --dependencies rclpy
+```
+
+This command creates a new directory called `my_python_pkg` with all the necessary files for a Python package.
+
+### 2. Create the Node File
+
+Navigate into your new package and create a Python file for your node.
+
+```bash
+cd my_python_pkg/my_python_pkg
+touch hello_node.py
+```
+
+Now, open `hello_node.py` in your favorite editor and paste the "Hello World" code from above into it.
+
+### 3. Add an Entry Point
+
+To make our node runnable, we need to add an entry point in the `setup.py` file of our package. Open `~/ros2_ws/src/my_python_pkg/setup.py` and add the following to the `console_scripts` list inside `entry_points`:
+
+```python
+# Inside setup.py
+entry_points={
+    'console_scripts': [
+        'hello_ros2 = my_python_pkg.hello_node:main',
+    ],
+},
+```
+
+This tells ROS 2 that we want to create an executable called `hello_ros2` that runs the `main` function from our `hello_node.py` file.
+
+### 4. Build and Run the Node
+
+Now, let's build our package and run the node.
+
+```bash
+# Navigate to the root of your workspace
+cd ~/ros2_ws
+
+# Build your package
+colcon build --packages-select my_python_pkg
+
+# Source the workspace
+source install/setup.bash
+
+# Run your node
+ros2 run my_python_pkg hello_ros2
+```
+
+You should see the "Hello, ROS 2!" message printed in your terminal. You have successfully created and run your first ROS 2 Python node!

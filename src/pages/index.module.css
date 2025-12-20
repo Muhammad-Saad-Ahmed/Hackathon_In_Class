@@ -1,0 +1,98 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 8rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: transparent; /* Handled by animation div */
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.heroTitle {
+  font-size: 4.5rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  color: #ffffff;
+  text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.ctaButton {
+  border-radius: 8px;
+  padding: 0.8rem 2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.ctaButtonPrimary {
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 25px rgba(112, 0, 255, 0.7);
+}
+
+.ctaButtonPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(112, 0, 255, 1);
+  background: var(--ifm-color-primary-light);
+  border-color: var(--ifm-color-primary-light);
+}
+
+.ctaButtonSecondary {
+  background: transparent;
+  border-color: var(--ifm-link-color);
+  color: var(--ifm-link-color);
+}
+
+.ctaButtonSecondary:hover {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: #fff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+
+.features {
+  padding: 4rem 0;
+  width: 100%;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  border-radius: 12px;
+  background: rgba(26, 27, 32, 0.5);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.feature:hover {
+  border-color: rgba(112, 0, 255, 0.5);
+  transform: translateY(-5px);
+  background: rgba(26, 27, 32, 1);
+}
+
+.featureTitle {
+  color: #fff;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}

@@ -1,0 +1,210 @@
+---
+title: "Lesson 3.2: Robot Description and Simulation Basics"
+description: "Learn how to load a URDF file and visualize it in RViz2."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 3.2: Robot Description and Simulation Basics
+
+## Learning Goals
+
+-   Understand how ROS 2 uses the `robot_state_publisher` to process URDF files.
+-   Create a ROS 2 launch file to start the necessary nodes for robot visualization.
+-   Visualize a URDF model in RViz2, the 3D visualization tool for ROS.
+-   Use the `joint_state_publisher_gui` to control the robot's joints.
+
+## From URDF to Visualization
+
+A URDF file is just a static description of a robot. To bring it to life in ROS 2, we need a few key nodes:
+
+-   **`robot_state_publisher`**: This node reads your URDF file, listens to the state of the robot's joints (from the `/joint_states` topic), and publishes the 3D poses of all the robot's links as TF2 transforms.
+-   **`joint_state_publisher` (or `joint_state_publisher_gui`)**: This node publishes the state of the robot's joints to the `/joint_states` topic. The GUI version provides sliders to let you move the joints manually.
+-   **`rviz2`**: The 3D visualizer for ROS. We can configure it to listen to the TF2 transforms and display our robot model.
+
+A **launch file** is a script that allows you to start multiple nodes with a single command, which is perfect for this scenario.
+
+## Multi-Link Robot Example
+
+Let's expand our previous URDF to create a simple two-link arm.
+
+Create a new file `two_link_arm.urdf` in the `urdf` directory of your `my_robot_description` package:
+
+```xml
+<?xml version="1.0"?>
+<robot name="two_link_arm">
+
+  <link name="world" />
+
+  <joint name="fixed_joint_to_world" type="fixed">
+    <parent link="world" />
+    <child link="base_link" />
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.2 0.2 0.1" />
+      </geometry>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="upper_arm_link" />
+    <origin xyz="0 0 0.1" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" />
+  </joint>
+
+  <link name="upper_arm_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.5" />
+      </geometry>
+      <origin xyz="0 0 0.25" rpy="0 0 0" />
+      <material name="blue">
+        <color rgba="0 0 0.8 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="upper_arm_link" />
+    <child link="forearm_link" />
+    <origin xyz="0 0 0.5" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit lower="-1.57" upper="1.57" />
+  </joint>
+
+  <link name="forearm_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.04" length="0.4" />
+      </geometry>
+      <origin xyz="0 0 0.2" rpy="0 0 0" />
+      <material name="green">
+        <color rgba="0 0.8 0 1" />
+      </material>
+    </visual>
+  </link>
+
+</robot>
+```
+
+## Hands-on Lab: Visualize Your Robot
+
+### 1. Create a Launch Directory
+
+In your `my_robot_description` package, create a `launch` directory.
+
+```bash
+cd my_robot_description
+mkdir launch
+```
+
+### 2. Create the Launch File
+
+Create a file named `display.launch.py` inside the `launch` directory and add the following code:
+
+```python
+# display.launch.py
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
+from launch.actions import DeclareLaunchArgument
+
+def generate_launch_description():
+    # Get the path to the URDF file
+    urdf_file_name = 'two_link_arm.urdf'
+    urdf = os.path.join(
+        get_package_share_directory('my_robot_description'),
+        'urdf',
+        urdf_file_name)
+    with open(urdf, 'r') as infp:
+        robot_desc = infp.read()
+
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'),
+
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{'robot_description': robot_desc}]),
+
+        Node(
+            package='joint_state_publisher_gui',
+            executable='joint_state_publisher_gui',
+            name='joint_state_publisher_gui',
+            output='screen'),
+
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            arguments=['-d', os.path.join(get_package_share_directory('my_robot_description'), 'rviz', 'display.rviz')])
+    ])
+```
+
+### 3. Create an RViz Configuration
+
+To make RViz open with the correct settings, we need a configuration file.
+
+First, create an `rviz` directory in your package.
+```bash
+mkdir rviz
+```
+Then, create a file named `display.rviz` in that directory. A simple way to get a configuration file is to open RViz, add the displays you want (like the RobotModel and TF), and then save the configuration from `File > Save Config As`.
+
+For now, you can start with a minimal configuration. Or even better, run the launch file once without the `-d` argument, configure RViz manually, and then save the configuration.
+
+For the `RobotModel` display in RViz, make sure the "Description Source" is set to "Topic" and the "Description Topic" is set to `/robot_description`.
+
+### 4. Update `setup.py`
+
+We need to tell `colcon` to install our new launch and URDF files. Open `setup.py` and add them to the `data_files` list.
+
+```python
+# Inside setup.py
+import os
+from glob import glob
+
+# ... (other setup code)
+data_files=[
+    ('share/ament_index/resource_index/packages',
+        ['resource/' + package_name]),
+    ('share/' + package_name, ['package.xml']),
+    # Add these lines
+    (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
+    (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
+    (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')), # Also install rviz configs
+],
+# ... (rest of setup)
+```
+
+### 5. Build and Launch
+
+Now, build your package and launch the file.
+
+```bash
+# In your workspace root
+colcon build --packages-select my_robot_description
+source install/setup.bash
+
+# Launch the display
+ros2 launch my_robot_description display.launch.py
+```
+
+This will open RViz and the Joint State Publisher GUI. In RViz, you should see your two-link arm. You can use the sliders in the GUI to move the `shoulder_joint` and `elbow_joint` and see the robot model move in RViz in real-time!

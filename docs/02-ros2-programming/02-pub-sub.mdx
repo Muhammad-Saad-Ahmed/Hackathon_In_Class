@@ -1,0 +1,160 @@
+---
+title: "Lesson 2.2: Publishing and Subscribing to Topics"
+description: "Learn how to use topics to send and receive data between nodes."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 2.2: Publishing and Subscribing to Topics
+
+## Learning Goals
+
+-   Understand the publisher/subscriber communication model in ROS 2.
+-   Write a Python node that publishes messages to a topic.
+-   Write a Python node that subscribes to a topic and processes messages.
+-   Run a publisher and subscriber to see them communicate.
+
+## The Publisher/Subscriber Model
+
+The most common way for nodes to communicate in ROS 2 is through **topics** using the **publisher/subscriber** model. This model is asynchronous and decouples the nodes from each other.
+
+-   A **publisher** is a node that sends out data on a specific topic. It doesn't know (or care) if any other nodes are receiving the data.
+-   A **subscriber** is a node that receives data by "listening" to a specific topic. It doesn't know where the data is coming from.
+-   The **topic** is the named bus that carries the messages from the publisher to the subscriber.
+
+This model allows you to build very flexible and scalable systems. You can add or remove nodes without affecting the other nodes in the system, as long as they are publishing or subscribing to the correct topics.
+
+<Admonition type="info" title="Message Types">
+  Every topic has a specific **message type**. This is a defined data structure that all messages on that topic must follow. For example, a topic for carrying text messages might use the `String` message type from the `std_msgs` package.
+</Admonition>
+
+## Publisher Node Example
+
+Here is an example of a simple publisher node that publishes a "Hello World" message with a counter every half second.
+
+```python
+# publisher_node.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MinimalPublisher(Node):
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(String, 'chatter', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = 'Hello World: %d' % self.i
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+def main(args=None):
+    rclpy.init(args=args)
+    minimal_publisher = MinimalPublisher()
+    rclpy.spin(minimal_publisher)
+    minimal_publisher.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Code Breakdown
+
+-   `self.create_publisher(String, 'chatter', 10)`: Creates a publisher.
+    -   The first argument is the message type (`String`).
+    -   The second is the topic name (`chatter`).
+    -   The third is the queue size. This is a required QoS (Quality of Service) setting.
+-   `self.create_timer(...)`: We use a timer to call the `timer_callback` function periodically.
+-   `self.publisher_.publish(msg)`: This is where the message is actually sent out on the topic.
+
+## Subscriber Node Example
+
+Now, let's create a subscriber node to receive the messages.
+
+```python
+# subscriber_node.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MinimalSubscriber(Node):
+    def __init__(self):
+        super().__init__('minimal_subscriber')
+        self.subscription = self.create_subscription(
+            String,
+            'chatter',
+            self.listener_callback,
+            10)
+        self.subscription  # prevent unused variable warning
+
+    def listener_callback(self, msg):
+        self.get_logger().info('I heard: "%s"' % msg.data)
+
+def main(args=None):
+    rclpy.init(args=args)
+    minimal_subscriber = MinimalSubscriber()
+    rclpy.spin(minimal_subscriber)
+    minimal_subscriber.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Code Breakdown
+
+-   `self.create_subscription(...)`: Creates a subscriber.
+    -   The first argument is the message type (`String`).
+    -   The second is the topic name (`chatter`).
+    -   The third is the callback function (`self.listener_callback`) that will be executed every time a message is received.
+    -   The fourth is the queue size.
+-   `def listener_callback(self, msg)`: This function is called with the received message (`msg`) as an argument.
+
+## Hands-on Lab: Connect Your Nodes
+
+### 1. Create a Package (or use the previous one)
+
+You can use the `my_python_pkg` from the previous lesson or create a new one.
+
+### 2. Create the Node Files
+
+Inside your package's directory (`my_python_pkg/my_python_pkg`), create two new files: `publisher_node.py` and `subscriber_node.py`. Paste the code from the examples above into the corresponding files.
+
+### 3. Update `setup.py`
+
+Add entry points for both nodes in your `setup.py` file.
+
+```python
+# Inside setup.py
+entry_points={
+    'console_scripts': [
+        'hello_ros2 = my_python_pkg.hello_node:main',
+        'talker = my_python_pkg.publisher_node:main',
+        'listener = my_python_pkg.subscriber_node:main',
+    ],
+},
+```
+
+### 4. Build and Run
+
+Now, build your package and run the nodes.
+
+```bash
+# In your workspace root (e.g., ~/ros2_ws)
+colcon build --packages-select my_python_pkg
+source install/setup.bash
+
+# In one terminal, run the publisher
+ros2 run my_python_pkg talker
+
+# In a NEW terminal, run the subscriber
+ros2 run my_python_pkg listener
+```
+
+You should see the `talker` terminal publishing messages and the `listener` terminal printing "I heard: ..." for each message. You have successfully established communication between two nodes using a topic!

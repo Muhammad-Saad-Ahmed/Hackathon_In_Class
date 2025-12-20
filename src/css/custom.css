@@ -1,0 +1,207 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima styling which is a CSS framework designed to
+ * work with Docusaurus.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #7000ff; /* Electric Purple */
+  --ifm-color-primary-dark: #5a00d1;
+  --ifm-color-primary-darker: #4f00b8;
+  --ifm-color-primary-darkest: #410099;
+  --ifm-color-primary-light: #861fff;
+  --ifm-color-primary-lighter: #9138ff;
+  --ifm-color-primary-lightest: #a966ff;
+
+  --ifm-link-color: #00f0ff; /* Neon Cyan */
+  --ifm-link-hover-color: #fff;
+  --ifm-code-font-size: 95%;
+
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+
+  --ifm-background-color: #0a0b10;
+  --ifm-background-surface-color: #1a1b20;
+  
+  --ifm-h1-font-size: 3rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.5rem;
+  
+  --docusaurus-highlighted-code-line-bg: rgba(0, 240, 255, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+html[data-theme='dark'] {
+  --ifm-color-primary: #8c4dff;
+  --ifm-color-primary-dark: #6f26ff;
+  --ifm-color-primary-darker: #630eff;
+  --ifm-color-primary-darkest: #4900d1;
+  --ifm-color-primary-light: #a975ff;
+  --ifm-color-primary-lighter: #b88cff;
+  --ifm-color-primary-lightest: #d3baff;
+  
+  --ifm-background-color: #0a0b10;
+  --ifm-background-surface-color: #1a1b20;
+
+  --ifm-link-color: #00f0ff;
+  --ifm-link-hover-color: #fff;
+
+  --docusaurus-highlighted-code-line-bg: rgba(0, 240, 255, 0.1);
+}
+
+/* Force dark mode */
+html[data-theme='light'] {
+  --ifm-color-primary: #7000ff;
+  --ifm-color-primary-dark: #5a00d1;
+  --ifm-color-primary-darker: #4f00b8;
+  --ifm-color-primary-darkest: #410099;
+  --ifm-color-primary-light: #861fff;
+  --ifm-color-primary-lighter: #9138ff;
+  --ifm-color-primary-lightest: #a966ff;
+
+  --ifm-background-color: #0a0b10;
+  --ifm-background-surface-color: #1a1b20;
+  --ifm-font-color-base: #fff;
+
+  --ifm-link-color: #00f0ff;
+  --ifm-link-hover-color: #fff;
+
+  --ifm-navbar-background-color: rgba(26, 27, 32, 0.8);
+  --ifm-footer-background-color: #0a0b10;
+  --ifm-card-background-color: #1e1e1e;
+}
+
+
+/* GLOBAL UI TWEAKS */
+
+/* Increased content width */
+.container {
+  max-width: 1280px;
+}
+
+main > div {
+  line-height: 1.65;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+
+/* Floating, Glassmorphism Navbar */
+.navbar {
+  margin: 1rem 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+  background-color: rgba(10, 11, 16, 0.5) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+  transition: all 0.3s ease;
+}
+.navbar--fixed-top {
+  top: 0;
+}
+.navbar:hover {
+  border-color: rgba(0, 240, 255, 0.4);
+}
+.navbar__brand, .navbar__link {
+    text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+}
+
+/* Sidebar */
+.menu {
+  background: linear-gradient(to bottom, rgba(10, 11, 16, 0.2), rgba(10, 11, 16, 0));
+  border-right: none !important;
+}
+
+.menu--responsive .menu__button {
+    background: var(--ifm-background-surface-color);
+}
+.menu__link--active:not(.menu__link--sublist) {
+  background: rgba(0, 240, 255, 0.1);
+}
+
+/* Admonitions (HUD Style) */
+.admonition {
+  background: rgba(10, 11, 16, 0.5);
+  border: 1px solid rgba(112, 0, 255, 0.2);
+  border-left-width: 4px;
+  border-radius: 8px;
+}
+.admonition-heading {
+  font-weight: bold;
+}
+.admonition.admonition-note {
+  border-left-color: #00f0ff;
+}
+.admonition.admonition-tip {
+  border-left-color: #7000ff;
+}
+.admonition.admonition-danger, .admonition.admonition-caution {
+  border-left-color: #ff4d4d;
+}
+
+/* Code Blocks (Terminal Style) */
+.prism-code-container {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+div[class*='codeBlockContainer'] {
+    position: relative;
+}
+div[class*='codeBlockContent']::before {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 12px;
+    height: 12px;
+    background: #ff5f56; /* Red */
+    border-radius: 50%;
+    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f; /* Yellow, Green */
+    z-index: 2;
+}
+.code-block-title-bar {
+    padding-left: 65px !important;
+}
+
+/* Hero Section Animation */
+.hero-background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  background: #0a0b10;
+}
+
+.hero-background-animation::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 800px;
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: translate(-50%, -50%);
+  animation: scanning 10s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes scanning {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}

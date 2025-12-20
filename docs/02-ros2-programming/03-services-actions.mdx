@@ -1,0 +1,194 @@
+--- 
+title: "Lesson 2.3: Services and Actions"
+description: "Learn about request/response communication with services and long-running tasks with actions."
+---
+
+import Admonition from '@theme/Admonition';
+
+# Lesson 2.3: Services and Actions
+
+## Learning Goals
+
+- Understand the request/response communication model of ROS 2 services.
+- Write a service server and a service client in Python.
+- Understand when to use actions for long-running, feedback-providing tasks.
+- Get an overview of how to write an action client.
+
+## Services: Request/Response Communication
+
+While topics are great for continuous data streams, **services** are used for synchronous, request/response interactions. A service has two parts: a **server** that provides the service and a **client** that calls it. The client sends a request and waits for the server to send back a response.
+
+This is useful for tasks that have a clear start and end, like "get the robot's current position" or "calculate the inverse kinematics for this arm pose."
+
+<Admonition type="info" title="Service Types">
+  Like topics have message types, services have **service types**. A service type defines the structure of the request and the response. For example, the `AddTwoInts` service type has a request with two integers (`a` and `b`) and a response with one integer (`sum`).
+</Admonition>
+
+### Service Server Example
+
+Here is a simple service server that adds two integers.
+
+```python
+# service_server.py
+from example_interfaces.srv import AddTwoInts
+import rclpy
+from rclpy.node import Node
+
+class MinimalService(Node):
+    def __init__(self):
+        super().__init__('minimal_service')
+        self.srv = self.create_service(AddTwoInts, 'add_two_ints', self.add_two_ints_callback)
+
+    def add_two_ints_callback(self, request, response):
+        response.sum = request.a + request.b
+        self.get_logger().info('Incoming request\na: %d b: %d' % (request.a, request.b))
+        return response
+
+def main(args=None):
+    rclpy.init(args=args)
+    minimal_service = MinimalService()
+    rclpy.spin(minimal_service)
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Service Client Example
+
+And here is the client that calls the service.
+
+```python
+# service_client.py
+import sys
+from example_interfaces.srv import AddTwoInts
+import rclpy
+from rclpy.node import Node
+
+class MinimalClientAsync(Node):
+    def __init__(self):
+        super().__init__('minimal_client_async')
+        self.cli = self.create_client(AddTwoInts, 'add_two_ints')
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
+        self.req = AddTwoInts.Request()
+
+    def send_request(self, a, b):
+        self.req.a = a
+        self.req.b = b
+        self.future = self.cli.call_async(self.req)
+        rclpy.spin_until_future_complete(self, self.future)
+        return self.future.result()
+
+def main(args=None):
+    rclpy.init(args=args)
+    minimal_client = MinimalClientAsync()
+    response = minimal_client.send_request(int(sys.argv[1]), int(sys.argv[2]))
+    minimal_client.get_logger().info(
+        'Result of add_two_ints: for %d + %d = %d' %
+        (int(sys.argv[1]), int(sys.argv[2]), response.sum))
+    minimal_client.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Actions: For Long-Running Tasks
+
+**Actions** are similar to services, but they are designed for long-running tasks that need to provide feedback while they are executing. For example, telling a robot to navigate to a specific location might take a long time. An action would allow the robot to provide feedback on its progress (e.g., "I am 50% of the way there").
+
+An action has three parts:
+- **Goal**: The request to start the long-running task.
+- **Feedback**: Intermediate updates on the progress of the task.
+- **Result**: The final outcome of the task.
+
+We will cover actions in more detail in a later module, but here is a quick look at an action client for a Fibonacci sequence generator.
+
+### Action Client Example (Fibonacci)
+
+```python
+# action_client.py
+import rclpy
+from rclpy.action import ActionClient
+from rclpy.node import Node
+from action_tutorials_interfaces.action import Fibonacci
+
+class FibonacciActionClient(Node):
+    def __init__(self):
+        super().__init__('fibonacci_action_client')
+        self._action_client = ActionClient(self, Fibonacci, 'fibonacci')
+
+    def send_goal(self, order):
+        goal_msg = Fibonacci.Goal()
+        goal_msg.order = order
+        self._action_client.wait_for_server()
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+        self.get_logger().info('Goal accepted :)
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
+    def get_result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info('Result: {0}'.format(result.sequence))
+        rclpy.shutdown()
+
+def main(args=None):
+    rclpy.init(args=args)
+    action_client = FibonacciActionClient()
+    action_client.send_goal(10)
+    rclpy.spin(action_client)
+
+if __name__ == '__main__':
+    main()
+```
+
+## Hands-on Lab: Create a Service
+
+### 1. Create the Node Files
+
+In your ROS 2 package (`my_python_pkg/my_python_pkg`), create two new files: `service_server.py` and `service_client.py`. Paste the code from the examples above.
+
+### 2. Update `setup.py`
+
+Add entry points for the service server and client.
+
+```python
+# Inside setup.py
+entry_points={
+    'console_scripts': [
+        'hello_ros2 = my_python_pkg.hello_node:main',
+        'talker = my_python_pkg.publisher_node:main',
+        'listener = my_python_pkg.subscriber_node:main',
+        'service = my_python_pkg.service_server:main',
+        'client = my_python_pkg.service_client:main',
+    ],
+},
+```
+
+### 3. Build and Run
+
+Build your package and then run the service and client.
+
+```bash
+# In your workspace root
+colcon build --packages-select my_python_pkg
+source install/setup.bash
+
+# In one terminal, run the service server
+ros2 run my_python_pkg service
+
+# In a NEW terminal, run the client with two numbers as arguments
+ros2 run my_python_pkg client 2 3
+```
+
+The client should print `Result of add_two_ints: for 2 + 3 = 5`, and the server will log the incoming request.
+
+You have now mastered the basics of ROS 2 services!
