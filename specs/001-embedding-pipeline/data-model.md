@@ -30,7 +30,7 @@
   - `id`: string (unique identifier for the record)
   - `payload`: dict (metadata including URL, title, content snippet)
   - `vector`: list[float] (embedding vector)
-  - `collection`: string (name of Qdrant collection - "rag_embedding")
+  - `collection`: string (name of Qdrant collection - "New_Embed")
 
 - **Validation**:
   - ID must be unique within collection

@@ -32,7 +32,7 @@ The main.py file contains all necessary functions for the embedding pipeline:
 - `extract_text_from_url(url)`: Extracts clean text content from a given URL
 - `chunk_text(text, chunk_size=1000, overlap=100)`: Splits text into manageable chunks
 - `embed(texts)`: Generates embeddings using Cohere API
-- `create_collection()`: Creates the "rag_embedding" collection in Qdrant
+- `create_collection()`: Creates the "New_Embed" collection in Qdrant
 - `save_chunk_to_qdrant(chunk, url, title, vector)`: Stores embeddings in Qdrant with metadata
 
 ## Usage
@@ -44,7 +44,7 @@ The main.py file contains all necessary functions for the embedding pipeline:
    ```
 
 2. **The main function will execute the complete pipeline**:
-   - Fetch all URLs from the specified site (https://hackathone-late-1.vercel.app/)
+   - Fetch all URLs from the specified site (https://hackathon-in-classnew.vercel.app/)
    - Extract text content from each URL
    - Chunk the content appropriately
    - Generate embeddings using Cohere
@@ -56,7 +56,7 @@ The main.py file contains all necessary functions for the embedding pipeline:
 - `COHERE_API_KEY`: Your Cohere API key for embedding generation
 - `QDRANT_URL`: URL of your Qdrant instance
 - `QDRANT_API_KEY`: API key for Qdrant access (if required)
-- `TARGET_URL`: The base URL to crawl (defaults to https://hackathone-late-1.vercel.app/)
+- `TARGET_URL`: The base URL to crawl (defaults to https://hackathon-in-classnew.vercel.app/)
 
 ## Troubleshooting
 

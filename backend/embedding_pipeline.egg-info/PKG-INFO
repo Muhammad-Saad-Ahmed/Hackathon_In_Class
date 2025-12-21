@@ -1,0 +1,71 @@
+Metadata-Version: 2.4
+Name: embedding-pipeline
+Version: 0.1.0
+Summary: Embedding pipeline to extract text from Docusaurus URLs, generate embeddings using Cohere, and store in Qdrant
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: cohere>=5.0.0
+Requires-Dist: qdrant-client>=1.9.0
+Requires-Dist: beautifulsoup4>=4.12.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: python-dotenv>=1.0.0
+
+# Embedding Pipeline
+
+This project implements an embedding pipeline that extracts text from deployed Docusaurus URLs, generates embeddings using Cohere, and stores them in Qdrant vector database for RAG-based retrieval.
+
+## Setup
+
+1. Clone the repository
+2. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+3. Create a virtual environment and install dependencies:
+   ```bash
+   uv venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   uv pip install -r requirements.txt
+   ```
+4. Copy the environment template and add your API keys:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API keys
+   ```
+
+## Environment Variables
+
+- `COHERE_API_KEY`: Your Cohere API key
+- `QDRANT_URL`: Your Qdrant URL
+- `QDRANT_API_KEY`: Your Qdrant API key (if required)
+- `CHUNK_SIZE`: Size of text chunks (default: 1000)
+- `CHUNK_OVERLAP`: Overlap between chunks (default: 100)
+- `RATE_LIMIT`: Requests per second (default: 1.0)
+- `SITEMAP_URL`: URL to the sitemap.xml (default: https://hackathon-in-classnew.vercel.app/sitemap.xml)
+
+## Usage
+
+Run the pipeline:
+```bash
+python main.py
+```
+
+## Architecture
+
+The pipeline performs the following steps:
+1. Fetches all URLs from the target Docusaurus site using sitemap.xml
+2. Extracts clean text content from each URL, excluding navigation, headers, footers, and sidebar elements
+3. Chunks the text into manageable pieces with overlap to maintain context
+4. Generates embeddings using Cohere's API
+5. Creates a Qdrant collection named "New_Rag_Data"
+6. Stores all embeddings with metadata in Qdrant for RAG-based retrieval
+
+## Functions
+
+- `get_all_urls()`: Fetches URLs from sitemap.xml
+- `extract_text_from_url()`: Extracts clean text from a URL
+- `chunk_text()`: Splits text into manageable chunks
+- `embed()`: Generates embeddings using Cohere
+- `create_collection()`: Creates Qdrant collection
+- `save_chunk_to_qdrant()`: Stores embeddings in Qdrant
+- `main()`: Orchestrates the complete pipeline

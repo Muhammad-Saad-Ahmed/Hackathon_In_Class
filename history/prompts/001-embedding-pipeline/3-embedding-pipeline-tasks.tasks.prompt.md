@@ -57,7 +57,7 @@ Your tasks MUST cover:
 3. HTML text extraction and cleaning
 4. Content chunking strategy
 5. Embedding generation using Cohere
-6. Qdrant collection creation (`rag_embedding`)
+6. Qdrant collection creation (`New_Embed`)
 7. Vector storage with metadata
 8. Pipeline orchestration via `main()`
 9. Testing (unit + integration)

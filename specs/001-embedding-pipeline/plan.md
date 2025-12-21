@@ -7,7 +7,7 @@
 
 ## Summary
 
-Implementation of an embedding pipeline that extracts text from deployed Docusaurus URLs (specifically the deployed site at https://hackathone-late-1.vercel.app/), generates embeddings using Cohere, and stores them in Qdrant for RAG-based retrieval. The implementation will be contained in a single main.py file with specific functions for URL crawling, text extraction, content chunking, embedding generation, and vector storage.
+Implementation of an embedding pipeline that extracts text from deployed Docusaurus URLs (specifically the deployed site at https://hackathon-in-classnew.vercel.app/), generates embeddings using Cohere, and stores them in Qdrant for RAG-based retrieval. The implementation will be contained in a single main.py file with specific functions for URL crawling, text extraction, content chunking, embedding generation, and vector storage.
 
 ## Technical Context
 
@@ -55,8 +55,8 @@ The embedding pipeline follows a single-file service architecture that processes
 ### External Dependencies
 - **Cohere API**: For embedding generation
 - **Qdrant Vector Database**: For vector storage and retrieval
-- **Target Docusaurus Site**: https://hackathone-late-1.vercel.app/ (or configurable URL)
-- **Sitemap URL**: https://hackathone-late-1.vercel.app/sitemap.xml
+- **Target Docusaurus Site**: https://hackathon-in-classnew.vercel.app/ (or configurable URL)
+- **Sitemap URL**: https://hackathon-in-classnew.vercel.app/sitemap.xml
 
 ## Architecture
 
@@ -142,7 +142,7 @@ backend/
 └── pyproject.toml       # Project configuration with uv
 ```
 
-**Structure Decision**: Single-file implementation in main.py as requested by user, with backend folder structure to contain the embedding pipeline service. This follows the user's specific requirement for a single file containing all functions: get_all_urls, extract_text_from_url, chunk_text, embed, create_collection named rag_embedding, save_chunk_to_qdrant and execute in main function.
+**Structure Decision**: Single-file implementation in main.py as requested by user, with backend folder structure to contain the embedding pipeline service. This follows the user's specific requirement for a single file containing all functions: get_all_urls, extract_text_from_url, chunk_text, embed, create_collection named New_Embed, save_chunk_to_qdrant and execute in main function.
 
 ## Complexity Tracking
 

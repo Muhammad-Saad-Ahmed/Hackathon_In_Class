@@ -24,7 +24,7 @@
 - [x] T008 Set up Cohere client with API key from environment
 - [x] T009 Set up Qdrant client with URL and API key from environment
 - [x] T010 Implement logging configuration for observability
-- [x] T011 Create constants for chunk size (1000), overlap (100), and collection name ("rag_embedding")
+- [x] T011 Create constants for chunk size (1000), overlap (100), and collection name ("New_Embed")
 - [x] T012 Implement retry decorator for handling API rate limits with exponential backoff
 
 ## Phase 3: [US1] Extract and Store Documentation Content
@@ -59,7 +59,7 @@
 
 **Independent Test**: Store embeddings and perform similarity searches, delivering fast and accurate retrieval of relevant content.
 
-- [x] T025 [US3] Implement create_collection function to create "rag_embedding" collection in Qdrant
+- [x] T025 [US3] Implement create_collection function to create "New_Embed" collection in Qdrant
 - [x] T026 [US3] Configure Qdrant collection with cosine distance metric and proper vector dimensions
 - [x] T027 [US3] Implement save_chunk_to_qdrant function to store embeddings with metadata
 - [x] T028 [US3] Ensure metadata includes URL, page title, content snippet, and timestamp
@@ -86,7 +86,7 @@
 - [x] T039 Create README.md with setup and usage instructions
 - [x] T040 Add unit tests for individual functions
 - [x] T041 Add integration tests for the complete pipeline
-- [x] T042 Perform end-to-end testing with the target URL https://hackathone-late-1.vercel.app/
+- [x] T042 Perform end-to-end testing with the target URL https://hackathon-in-classnew.vercel.app/
 - [x] T043 Optimize performance to meet 10-second per page requirement
 - [x] T044 Document any configuration options and environment variables
 

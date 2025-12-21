@@ -6,7 +6,7 @@
 **Decision**: UV is a modern, fast Python package manager that will be used to initialize the project
 
 ## Decision: Web Scraping Approach
-**Rationale**: Need to extract text from Docusaurus URLs, specifically from https://hackathone-late-1.vercel.app/
+**Rationale**: Need to extract text from Docusaurus URLs, specifically from https://hackathon-in-classnew.vercel.app/
 **Alternatives considered**: requests + BeautifulSoup, Selenium, Scrapy
 **Decision**: requests + BeautifulSoup4 for efficient static content extraction from Docusaurus sites
 

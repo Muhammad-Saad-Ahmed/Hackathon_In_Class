@@ -64,7 +64,7 @@ Successfully implemented the complete embedding pipeline for Docusaurus RAG chat
 - Included rate limiting and error handling
 
 ### Phase 5: [US3] Store Embeddings in Qdrant Vector Database
-- Created create_collection function for "rag_embedding" collection
+- Created create_collection function for "New_Embed" collection
 - Configured Qdrant with cosine distance metric
 - Implemented save_chunk_to_qdrant with metadata
 - Added payload validation and error handling
@@ -85,7 +85,7 @@ Successfully implemented the complete embedding pipeline for Docusaurus RAG chat
 
 The implementation is complete with:
 - Single-file architecture in backend/main.py with all required functions
-- Support for https://hackathone-late-1.vercel.app/ target URL
+- Support for https://hackathon-in-classnew.vercel.app/ target URL
 - Complete pipeline: get_all_urls, extract_text_from_url, chunk_text, embed, create_collection, save_chunk_to_qdrant
 - Proper error handling, logging, and performance monitoring
 - Unit tests in backend/test_pipeline.py

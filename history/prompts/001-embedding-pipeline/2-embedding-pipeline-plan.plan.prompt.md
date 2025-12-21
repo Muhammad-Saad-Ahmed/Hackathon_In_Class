@@ -33,7 +33,7 @@ tests: []
   - Setup **Cohere** and **Qdrant** clients
   - Fetch, clean, and chunk text from deployed URLs
   - Generate embeddings and upsert into Qdrant with metadata
-  - Only in the one file name main.py system design ( get_all_urls, extract_text_from_url chunk_text, embed, create_collection named rag_embedding, save_chunk_to_qdrant and execute in last main function ) here is deploy link : https://hackathone-late-1.vercel.app/
+  - Only in the one file name main.py system design ( get_all_urls, extract_text_from_url chunk_text, embed, create_collection named New_Embed, save_chunk_to_qdrant and execute in last main function ) here is deploy link : https://hackathon-in-classnew.vercel.app/
 ```
 
 ## Response Summary
