@@ -23,7 +23,7 @@ const config: Config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'Muhammad-Saad-Ahmed', // Usually your GitHub org/user name.
-  projectName: 'Hackathone_Late', // Usually your repo name.
+  projectName: 'Hackathon_In_Class', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -44,7 +44,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late/tree/main/',
+            'https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class/tree/main/',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -73,7 +73,7 @@ const config: Config = {
               label: 'Tutorial',
             },
             {
-href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late',
+href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class',
             },
           ],
         },
@@ -94,7 +94,7 @@ href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late',
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late',
+              href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class',
             },
           ],
         },

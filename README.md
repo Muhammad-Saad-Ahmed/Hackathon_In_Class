@@ -39,4 +39,4 @@ GIT_USER=<Your GitHub username> yarn deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
-# https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late
+# https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class

@@ -4,8 +4,8 @@
   "private": true,
   "description": "Building the Body for the Artificial Mind.",
   "author": "Muhammad-Saad-Ahmed",
-  "repository": "https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late",
-  "bugs": "https://github.com/Muhammad-Saad-Ahmed/Hackathone_Late/issues",
+  "repository": "https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class",
+  "bugs": "https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class/issues",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
