@@ -1,0 +1,5 @@
+qdrant-client
+typer[all]
+sentence-transformers
+pytest
+pydantic
