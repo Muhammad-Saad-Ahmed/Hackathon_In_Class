@@ -73,7 +73,9 @@ const config: Config = {
               label: 'Tutorial',
             },
             {
-href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class',
+              href: 'https://github.com/Muhammad-Saad-Ahmed/Hackathon_In_Class',
+              label: 'GitHub',
+              position: 'right',
             },
           ],
         },
