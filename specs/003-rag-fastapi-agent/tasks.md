@@ -6,41 +6,41 @@ This file breaks down the implementation of the RAG Agent feature into actionabl
 
 ## Phase 1: Setup
 
-- [ ] T001 Create the agent file at `backend/agent.py`.
-- [ ] T002 Create the test file at `backend/tests/test_agent.py`.
-- [ ] T003 Update `backend/requirements.txt` to include `openai`, `qdrant-client`, and `sentence-transformers`.
+- [x] T001 Create the agent file at `backend/agent.py`.
+- [x] T002 Create the test file at `backend/tests/test_agent.py`.
+- [x] T003 Update `backend/requirements.txt` to include `openai`, `qdrant-client`, `sentence-transformers`, and `python-dotenv`.
 
 ## Phase 2: Foundational
 
-- [ ] T004 In `backend/agent.py`, implement a `retrieve_documents` function that takes a query, embeds it, and searches Qdrant, returning a list of `DocumentChunk` objects. This will be based on the logic in `backend/retrieving.py`.
-- [ ] T005 In `backend/agent.py`, set up the OpenAI client, loading the API key from a `.env` file.
+- [x] T004 In `backend/agent.py`, implement a `retrieve_documents` function that takes a query, embeds it, and searches Qdrant, returning a list of `DocumentChunk` objects. This will be based on the logic in `backend/retrieving.py`.
+- [x] T005 In `backend/agent.py`, set up the OpenAI client, loading the API key from a `.env` file.
 
 ## Phase 3: User Story 1 - Core RAG functionality
 
 **Goal**: A user can submit a query and receive a relevant answer based on stored documents.
 **Independent Test**: Run the agent script with a query and verify a valid answer and sources are printed.
 
-- [ ] T006 [US1] In `backend/agent.py`, implement the main `run_agent` function that takes a user query.
-- [ ] T007 [US1] In `run_agent`, call `retrieve_documents` to get the context.
-- [ ] T008 [US1] In `run_agent`, construct a prompt for the OpenAI completions API, including the user query and the retrieved context.
-- [ ] T009 [US1] In `run_agent`, call the OpenAI API to get the generated answer.
-- [ ] T010 [US1] In `run_agent`, print the answer and the sources to the console.
-- [ ] T011 [US1] [P] In `backend/tests/test_agent.py`, add a test that calls `run_agent` with a sample query and asserts that a non-empty answer is returned.
+- [x] T006 [US1] In `backend/agent.py`, implement the main `run_agent` function that takes a user query.
+- [x] T007 [US1] In `run_agent`, call `retrieve_documents` to get the context.
+- [x] T008 [US1] In `run_agent`, construct a prompt for the OpenAI completions API, including the user query and the retrieved context.
+- [x] T009 [US1] In `run_agent`, call the OpenAI API to get the generated answer.
+- [x] T010 [US1] In `run_agent`, print the answer and the sources to the console.
+- [x] T011 [US1] [P] In `backend/tests/test_agent.py`, add a test that calls `run_agent` with a sample query and asserts that a non-empty answer is returned.
 
 ## Phase 4: User Story 2 - Error Handling
 
 **Goal**: The system gracefully handles invalid queries or cases with no results.
 **Independent Test**: Run the agent with an empty query and with a query that yields no results, and verify the correct error messages are shown.
 
-- [ ] T012 [US2] In `backend/agent.py`, add a check at the beginning of `run_agent` to handle empty or None queries.
-- [ ] T013 [US2] In `backend/agent.py`, handle the case where `retrieve_documents` returns no documents, providing a "could not find an answer" message.
-- [ ] T014 [US2] [P] In `backend/tests/test_agent.py`, add a test for the empty query case.
-- [ ] T015 [US2] [P] In `backend/tests/test_agent.py`, add a test for the no-documents-found case (this may require mocking the retrieval function).
+- [x] T012 [US2] In `backend/agent.py`, add a check at the beginning of `run_agent` to handle empty or None queries.
+- [x] T013 [US2] In `backend/agent.py`, handle the case where `retrieve_documents` returns no documents, providing a "could not find an answer" message.
+- [x] T014 [US2] [P] In `backend/tests/test_agent.py`, add a test for the empty query case.
+- [x] T015 [US2] [P] In `backend/tests/test_agent.py`, add a test for the no-documents-found case (this may require mocking the retrieval function).
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T016 Add docstrings and type hinting to all new functions in `backend/agent.py`.
-- [ ] T017 Add a main execution block in `backend/agent.py` to allow running it as a script with command-line arguments (using `argparse` or `typer`).
+- [x] T016 Add docstrings and type hinting to all new functions in `backend/agent.py`.
+- [x] T017 Add a main execution block in `backend/agent.py` to allow running it as a script with command-line arguments (using `argparse` or `typer`).
 
 ## Dependencies
 
