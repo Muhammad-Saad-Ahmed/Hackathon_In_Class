@@ -1,0 +1,48 @@
+openapi: 3.0.0
+info:
+  title: RAG Agent API
+  version: 1.0.0
+paths:
+  /ask:
+    post:
+      summary: Ask a question to the RAG agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  example: "What is ROS2?"
+      responses:
+        '200':
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: "ROS2 is the Robot Operating System 2..."
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                          example: "https://docs.ros.org/en/foxy/index.html"
+                        score:
+                          type: number
+                          format: float
+                          example: 0.95
+                  matched_chunks:
+                    type: array
+                    items:
+                      type: string
+                      example: "The Robot Operating System 2 (ROS 2) is a set of software libraries..."
+        '422':
+          description: Validation Error

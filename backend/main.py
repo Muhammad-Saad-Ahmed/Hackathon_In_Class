@@ -15,7 +15,7 @@ load_dotenv()
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-TARGET_URL = os.getenv("TARGET_URL", "https://hackathone-late-1.vercel.app/")
+TARGET_URL = os.getenv("TARGET_URL", "https://hackathon-in-classnew.vercel.app/")
 COLLECTION_NAME = "rag_embedding"
 
 # Initialize Cohere client
