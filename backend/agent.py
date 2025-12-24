@@ -5,13 +5,19 @@ import os
 from typing import List, Union
 from pydantic import BaseModel, Field
 from qdrant_client import QdrantClient
-import openai
+import google.generativeai as genai
 import typer
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
+from phr_generator import PHRGenerator
+import json
 
 load_dotenv()
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# Configure Gemini
+gemini_api_key = os.environ.get("GEMINI_API_KEY")
+if not gemini_api_key:
+    raise ValueError("GEMINI_API_KEY environment variable not set.")
+genai.configure(api_key=gemini_api_key)
 
 app = typer.Typer()
 
@@ -71,7 +77,7 @@ def retrieve_documents(query: str) -> List[DocumentChunk]:
     results = process_hits(hits)
     return results
 
-def run_agent(query: str):
+def run_agent(query: str, command: str):
     """
     Runs the RAG agent.
     """
@@ -89,13 +95,10 @@ def run_agent(query: str):
     
     prompt = f"Based on the following context, please answer the question.\n\nContext:\n{context}\n\nQuestion:\n{query}"
     
-    response = openai.completions.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=150
-    )
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content(prompt)
     
-    answer = response.choices[0].text.strip()
+    answer = response.text
     
     print("Answer:")
     print(answer)
@@ -103,12 +106,28 @@ def run_agent(query: str):
     for doc in documents:
         print(f"- {doc.url} (Score: {doc.score:.4f})")
 
+    # Generate PHR
+    phr_generator = PHRGenerator()
+    phr_filepath = phr_generator.generate_phr(
+        prompt_text=query,
+        response_text=answer,
+        title="RAG Agent Query",
+        stage="general",
+        model="gemini-pro",
+        command=command,
+        files_yaml=[doc.url for doc in documents],
+        outcome_impact="RAG agent response to user query.",
+        files_summary=json.dumps([{"url": doc.url, "score": doc.score} for doc in documents]),
+    )
+    print(f"\nPHR generated at: {phr_filepath}")
+
 @app.command()
 def main(query: str = typer.Option(..., "--query", help="The query string.")):
     """
     Main function to run the RAG agent.
     """
-    run_agent(query)
+    command_str = f"python backend/agent.py --query '{query}'"
+    run_agent(query, command_str)
 
 if __name__ == "__main__":
     app()

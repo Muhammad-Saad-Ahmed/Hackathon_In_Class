@@ -3,5 +3,5 @@ typer[all]
 sentence-transformers
 pytest
 pydantic
-openai
+google-generativeai
 python-dotenv
